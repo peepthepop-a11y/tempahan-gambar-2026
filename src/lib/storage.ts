@@ -12,6 +12,7 @@ import {
   PaymentStatus,
   YearGrade,
 } from '../types';
+import { SupabaseCloud, isSupabaseConfigured } from './supabase';
 
 const STORAGE_KEYS = {
   CLASSES: 'stsp_classes',
@@ -427,240 +428,8 @@ export function generateClassPhotoSvg(
 
   return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${primaryBg}"/><stop offset="100%" stop-color="${secondaryBg}"/></linearGradient><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23ffffff" stroke-width="0.5" stroke-opacity="0.08"/></pattern></defs><rect width="800" height="600" fill="url(%23bg)"/><rect width="800" height="600" fill="url(%23grid)"/><rect x="24" y="24" width="752" height="552" fill="none" stroke="${accentGold}" stroke-width="3" rx="8"/><rect x="32" y="32" width="736" height="536" fill="none" stroke="%23ffffff" stroke-width="1" stroke-opacity="0.3" rx="6"/><rect x="44" y="44" width="712" height="68" rx="8" fill="%23ffffff" fill-opacity="0.08"/><text x="400" y="72" font-family="sans-serif" font-size="14" font-weight="900" fill="${accentGold}" text-anchor="middle" letter-spacing="2">SK TAMAN SRI PULAI · KANGKAR PULAI, JOHOR</text><text x="400" y="96" font-family="sans-serif" font-size="20" font-weight="900" fill="%23ffffff" text-anchor="middle">SESI FOTOGRAFI KELAS 2026</text><rect x="60" y="130" width="680" height="340" rx="12" fill="%23ffffff" fill-opacity="0.04" stroke="%23ffffff" stroke-width="1" stroke-opacity="0.15"/><g transform="translate(400, 240)"><circle cx="0" cy="-20" r="38" fill="${accentGold}"/><path d="M -45 50 C -45 0, 45 0, 45 50 Z" fill="${accentGold}" fill-opacity="0.9"/><text x="0" y="70" font-family="sans-serif" font-size="12" font-weight="800" fill="%23ffffff" text-anchor="middle">GURU KELAS</text><text x="0" y="86" font-family="sans-serif" font-size="11" font-weight="500" fill="%23cbd5e1" text-anchor="middle">${teacherName}</text></g><g fill="%2394a3b8" fill-opacity="0.85"><circle cx="160" cy="220" r="26"/><path d="M 125 270 C 125 235, 195 235, 195 270 Z"/><circle cx="260" cy="220" r="26"/><path d="M 225 270 C 225 235, 295 235, 295 270 Z"/><circle cx="540" cy="220" r="26"/><path d="M 505 270 C 505 235, 575 235, 575 270 Z"/><circle cx="640" cy="220" r="26"/><path d="M 605 270 C 605 235, 675 235, 675 270 Z"/><circle cx="110" cy="340" r="24"/><path d="M 80 385 C 80 350, 140 350, 140 385 Z"/><circle cx="200" cy="340" r="24"/><path d="M 170 385 C 170 350, 230 350, 230 385 Z"/><circle cx="290" cy="340" r="24"/><path d="M 260 385 C 260 350, 320 350, 320 385 Z"/><circle cx="380" cy="360" r="24"/><path d="M 350 405 C 350 370, 410 370, 410 405 Z"/><circle cx="470" cy="360" r="24"/><path d="M 440 405 C 440 370, 500 370, 500 405 Z"/><circle cx="560" cy="340" r="24"/><path d="M 530 385 C 530 350, 590 350, 590 385 Z"/><circle cx="650" cy="340" r="24"/><path d="M 620 385 C 620 350, 680 350, 680 385 Z"/></g><g transform="translate(400, 300) rotate(-18)"><rect x="-260" y="-30" width="520" height="60" rx="8" fill="%230f172a" fill-opacity="0.3" stroke="%23ffffff" stroke-width="1.5" stroke-opacity="0.3"/><text x="0" y="9" font-family="sans-serif" font-size="22" font-weight="900" fill="%23ffffff" fill-opacity="0.65" text-anchor="middle" letter-spacing="4">CONTOH WATERMARK PREVIEW</text></g><rect x="44" y="490" width="712" height="74" rx="8" fill="%23ffffff" fill-opacity="0.95"/><text x="64" y="522" font-family="sans-serif" font-size="20" font-weight="900" fill="%23163B65">KELAS ${className.toUpperCase()}</text><text x="64" y="544" font-family="sans-serif" font-size="12" font-weight="700" fill="%23475569">${year.toUpperCase()} · GURU KELAS: ${teacherName.toUpperCase()}</text><rect x="580" y="508" width="160" height="38" rx="6" fill="${typeBadgeBg}"/><text x="660" y="532" font-family="sans-serif" font-size="11" font-weight="900" fill="${typeBadgeTextColor}" text-anchor="middle">${typeBadgeText}</text></svg>`;
 }
+const INITIAL_CLASS_PHOTOS: ClassPhoto[] = [];
 
-const INITIAL_CLASS_PHOTOS: ClassPhoto[] = [
-  {
-    id: 'cpho-pra-1-formal',
-    classId: 'cls-pra-1',
-    className: 'Prasekolah Mawaddah',
-    year: 'Prasekolah',
-    title: 'Gambar Formal Prasekolah Mawaddah',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('Prasekolah Mawaddah', 'Prasekolah', 'Formal', 'Cikgu Nurul Huda binti Ismail'),
-    teacherName: 'Cikgu Nurul Huda binti Ismail',
-    uploadedAt: '2026-02-14T07:30:00Z',
-  },
-  {
-    id: 'cpho-pra-1-freestyle',
-    classId: 'cls-pra-1',
-    className: 'Prasekolah Mawaddah',
-    year: 'Prasekolah',
-    title: 'Gambar Freestyle Prasekolah Mawaddah',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('Prasekolah Mawaddah', 'Prasekolah', 'Freestyle', 'Cikgu Nurul Huda binti Ismail'),
-    teacherName: 'Cikgu Nurul Huda binti Ismail',
-    uploadedAt: '2026-02-14T07:45:00Z',
-  },
-  {
-    id: 'cpho-ppki-1-formal',
-    classId: 'cls-ppki-1',
-    className: 'PPKI Al-Fateh',
-    year: 'Pendidikan Khas',
-    title: 'Gambar Formal PPKI Al-Fateh',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('PPKI Al-Fateh', 'Pendidikan Khas', 'Formal', 'Cikgu Mohd Hafiz bin Zakaria'),
-    teacherName: 'Cikgu Mohd Hafiz bin Zakaria',
-    uploadedAt: '2026-02-14T07:50:00Z',
-  },
-  {
-    id: 'cpho-ppki-1-freestyle',
-    classId: 'cls-ppki-1',
-    className: 'PPKI Al-Fateh',
-    year: 'Pendidikan Khas',
-    title: 'Gambar Freestyle PPKI Al-Fateh',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('PPKI Al-Fateh', 'Pendidikan Khas', 'Freestyle', 'Cikgu Mohd Hafiz bin Zakaria'),
-    teacherName: 'Cikgu Mohd Hafiz bin Zakaria',
-    uploadedAt: '2026-02-14T07:55:00Z',
-  },
-  {
-    id: 'cpho-1b-formal',
-    classId: 'cls-1b',
-    className: '1 Bestari',
-    year: 'Tahun 1',
-    title: 'Gambar Formal Kelas 1 Bestari',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('1 Bestari', 'Tahun 1', 'Formal', 'Cikgu Noraini binti Yusof'),
-    teacherName: 'Cikgu Noraini binti Yusof',
-    uploadedAt: '2026-02-14T08:00:00Z',
-  },
-  {
-    id: 'cpho-1b-freestyle',
-    classId: 'cls-1b',
-    className: '1 Bestari',
-    year: 'Tahun 1',
-    title: 'Gambar Freestyle Kelas 1 Bestari',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('1 Bestari', 'Tahun 1', 'Freestyle', 'Cikgu Noraini binti Yusof'),
-    teacherName: 'Cikgu Noraini binti Yusof',
-    uploadedAt: '2026-02-14T08:15:00Z',
-  },
-  {
-    id: 'cpho-1c-formal',
-    classId: 'cls-1c',
-    className: '1 Cemerlang',
-    year: 'Tahun 1',
-    title: 'Gambar Formal Kelas 1 Cemerlang',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('1 Cemerlang', 'Tahun 1', 'Formal', 'Cikgu Ahmad Ridzwan'),
-    teacherName: 'Cikgu Ahmad Ridzwan',
-    uploadedAt: '2026-02-14T08:30:00Z',
-  },
-  {
-    id: 'cpho-1c-freestyle',
-    classId: 'cls-1c',
-    className: '1 Cemerlang',
-    year: 'Tahun 1',
-    title: 'Gambar Freestyle Kelas 1 Cemerlang',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('1 Cemerlang', 'Tahun 1', 'Freestyle', 'Cikgu Ahmad Ridzwan'),
-    teacherName: 'Cikgu Ahmad Ridzwan',
-    uploadedAt: '2026-02-14T08:45:00Z',
-  },
-  {
-    id: 'cpho-1a-formal',
-    classId: 'cls-1a',
-    className: '1 Amanah',
-    year: 'Tahun 1',
-    title: 'Gambar Formal Kelas 1 Amanah',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('1 Amanah', 'Tahun 1', 'Formal', 'Ustazah Siti Hajar'),
-    teacherName: 'Ustazah Siti Hajar',
-    uploadedAt: '2026-02-14T09:00:00Z',
-  },
-  {
-    id: 'cpho-2b-formal',
-    classId: 'cls-2b',
-    className: '2 Bestari',
-    year: 'Tahun 2',
-    title: 'Gambar Formal Kelas 2 Bestari',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('2 Bestari', 'Tahun 2', 'Formal', 'Cikgu Fauziah binti Hamid'),
-    teacherName: 'Cikgu Fauziah binti Hamid',
-    uploadedAt: '2026-02-15T09:00:00Z',
-  },
-  {
-    id: 'cpho-2b-freestyle',
-    classId: 'cls-2b',
-    className: '2 Bestari',
-    year: 'Tahun 2',
-    title: 'Gambar Freestyle Kelas 2 Bestari',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('2 Bestari', 'Tahun 2', 'Freestyle', 'Cikgu Fauziah binti Hamid'),
-    teacherName: 'Cikgu Fauziah binti Hamid',
-    uploadedAt: '2026-02-15T09:15:00Z',
-  },
-  {
-    id: 'cpho-2c-formal',
-    classId: 'cls-2c',
-    className: '2 Cemerlang',
-    year: 'Tahun 2',
-    title: 'Gambar Formal Kelas 2 Cemerlang',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('2 Cemerlang', 'Tahun 2', 'Formal', 'Cikgu Roslan bin Daud'),
-    teacherName: 'Cikgu Roslan bin Daud',
-    uploadedAt: '2026-02-15T09:30:00Z',
-  },
-  {
-    id: 'cpho-3b-formal',
-    classId: 'cls-3b',
-    className: '3 Bestari',
-    year: 'Tahun 3',
-    title: 'Gambar Formal Kelas 3 Bestari',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('3 Bestari', 'Tahun 3', 'Formal', 'Cikgu Maryam binti Omar'),
-    teacherName: 'Cikgu Maryam binti Omar',
-    uploadedAt: '2026-02-16T10:00:00Z',
-  },
-  {
-    id: 'cpho-3b-freestyle',
-    classId: 'cls-3b',
-    className: '3 Bestari',
-    year: 'Tahun 3',
-    title: 'Gambar Freestyle Kelas 3 Bestari',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('3 Bestari', 'Tahun 3', 'Freestyle', 'Cikgu Maryam binti Omar'),
-    teacherName: 'Cikgu Maryam binti Omar',
-    uploadedAt: '2026-02-16T10:15:00Z',
-  },
-  {
-    id: 'cpho-4b-formal',
-    classId: 'cls-4b',
-    className: '4 Bestari',
-    year: 'Tahun 4',
-    title: 'Gambar Formal Kelas 4 Bestari',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('4 Bestari', 'Tahun 4', 'Formal', 'Cikgu Hasnah binti Idris'),
-    teacherName: 'Cikgu Hasnah binti Idris',
-    uploadedAt: '2026-02-17T11:00:00Z',
-  },
-  {
-    id: 'cpho-5b-formal',
-    classId: 'cls-5b',
-    className: '5 Bestari',
-    year: 'Tahun 5',
-    title: 'Gambar Formal Kelas 5 Bestari',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('5 Bestari', 'Tahun 5', 'Formal', 'Cikgu Khairul Nizam'),
-    teacherName: 'Cikgu Khairul Nizam',
-    uploadedAt: '2026-02-18T09:00:00Z',
-  },
-  {
-    id: 'cpho-5b-freestyle',
-    classId: 'cls-5b',
-    className: '5 Bestari',
-    year: 'Tahun 5',
-    title: 'Gambar Freestyle Kelas 5 Bestari',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('5 Bestari', 'Tahun 5', 'Freestyle', 'Cikgu Khairul Nizam'),
-    teacherName: 'Cikgu Khairul Nizam',
-    uploadedAt: '2026-02-18T09:20:00Z',
-  },
-  {
-    id: 'cpho-6b-formal',
-    classId: 'cls-6b',
-    className: '6 Bestari',
-    year: 'Tahun 6',
-    title: 'Gambar Formal Kelas 6 Bestari',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('6 Bestari', 'Tahun 6', 'Formal', 'Cikgu Azman bin Sulaiman'),
-    teacherName: 'Cikgu Azman bin Sulaiman',
-    uploadedAt: '2026-02-19T10:00:00Z',
-  },
-  {
-    id: 'cpho-6b-freestyle',
-    classId: 'cls-6b',
-    className: '6 Bestari',
-    year: 'Tahun 6',
-    title: 'Gambar Freestyle Kelas 6 Bestari',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('6 Bestari', 'Tahun 6', 'Freestyle', 'Cikgu Azman bin Sulaiman'),
-    teacherName: 'Cikgu Azman bin Sulaiman',
-    uploadedAt: '2026-02-19T10:20:00Z',
-  },
-  {
-    id: 'cpho-6c-formal',
-    classId: 'cls-6c',
-    className: '6 Cemerlang',
-    year: 'Tahun 6',
-    title: 'Gambar Formal Kelas 6 Cemerlang',
-    photoType: 'Formal',
-    photoUrl: generateClassPhotoSvg('6 Cemerlang', 'Tahun 6', 'Formal', 'Cikgu Suraya binti Mansor'),
-    teacherName: 'Cikgu Suraya binti Mansor',
-    uploadedAt: '2026-02-19T11:00:00Z',
-  },
-  {
-    id: 'cpho-6c-freestyle',
-    classId: 'cls-6c',
-    className: '6 Cemerlang',
-    year: 'Tahun 6',
-    title: 'Gambar Freestyle Kelas 6 Cemerlang',
-    photoType: 'Freestyle',
-    photoUrl: generateClassPhotoSvg('6 Cemerlang', 'Tahun 6', 'Freestyle', 'Cikgu Suraya binti Mansor'),
-    teacherName: 'Cikgu Suraya binti Mansor',
-    uploadedAt: '2026-02-19T11:20:00Z',
-  },
-];
 
 const INITIAL_AUDIT_LOGS: AuditLog[] = [
   {
@@ -734,6 +503,14 @@ export const StorageService = {
     const updated = { ...current, ...settings };
     setJson(STORAGE_KEYS.SETTINGS, updated);
     this.addAuditLog('admin@sktsp.edu.my', 'Kemaskini Tetapan', 'Tetapan sistem sekolah dikemaskini.');
+
+    // Asynchronously sync to Supabase if configured
+    if (isSupabaseConfigured()) {
+      SupabaseCloud.saveSettings(updated).catch((err) =>
+        console.warn('Supabase settings sync error:', err)
+      );
+    }
+
     return updated;
   },
 
@@ -1088,6 +865,13 @@ export const StorageService = {
       });
     }
 
+    // Sync to Supabase in background if configured
+    if (isSupabaseConfigured()) {
+      SupabaseCloud.saveOrder(newOrder).catch((err) =>
+        console.warn('Supabase saveOrder error:', err)
+      );
+    }
+
     return newOrder;
   },
   updateOrder(id: string, updates: Partial<Order>): Order | null {
@@ -1100,6 +884,13 @@ export const StorageService = {
       updatedAt: new Date().toISOString(),
     };
     setJson(STORAGE_KEYS.ORDERS, orders);
+
+    if (isSupabaseConfigured()) {
+      SupabaseCloud.saveOrder(orders[index]).catch((err) =>
+        console.warn('Supabase updateOrder error:', err)
+      );
+    }
+
     return orders[index];
   },
   updateOrderStatus(id: string, orderStatus: OrderStatus, notes?: string): Order | null {
@@ -1174,12 +965,14 @@ export const StorageService = {
 
   // --- CLASS GALLERY PHOTOS (PUBLIC REVIEW) ---
   getClassPhotos(): ClassPhoto[] {
-    const photos = getJson<ClassPhoto[]>(STORAGE_KEYS.CLASS_PHOTOS, INITIAL_CLASS_PHOTOS);
-    if (!photos || photos.length === 0) {
-      setJson(STORAGE_KEYS.CLASS_PHOTOS, INITIAL_CLASS_PHOTOS);
+    const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.CLASS_PHOTOS) : null;
+    if (raw === null) return INITIAL_CLASS_PHOTOS;
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as ClassPhoto[]) : INITIAL_CLASS_PHOTOS;
+    } catch {
       return INITIAL_CLASS_PHOTOS;
     }
-    return photos;
   },
   addClassPhoto(photo: Omit<ClassPhoto, 'id' | 'uploadedAt'>): ClassPhoto {
     const photos = this.getClassPhotos();
@@ -1367,4 +1160,135 @@ export const StorageService = {
       return { success: false, message: `Ralat memproses fail sandaran: ${e.message}` };
     }
   },
+
+  // --- CROSS-DEVICE & CLOUD SYNCHRONIZATION ---
+  async initSync(): Promise<void> {
+    if (typeof window === 'undefined') return;
+
+    // 1. If this device has no local data yet (e.g. phone/tablet opening fresh),
+    // load the static school data from /data/sktsp-config.json
+    const hasExistingSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+    const hasExistingClasses = localStorage.getItem(STORAGE_KEYS.CLASSES);
+
+    if (!hasExistingSettings || !hasExistingClasses) {
+      try {
+        const resp = await fetch('/data/sktsp-config.json');
+        if (resp.ok) {
+          const cfg = await resp.json();
+          if (cfg && typeof cfg === 'object') {
+            if (!hasExistingSettings && cfg.settings) {
+              setJson(STORAGE_KEYS.SETTINGS, cfg.settings);
+            }
+            if (!hasExistingClasses && Array.isArray(cfg.classes) && cfg.classes.length > 0) {
+              setJson(STORAGE_KEYS.CLASSES, cfg.classes);
+            }
+            if (Array.isArray(cfg.packages) && cfg.packages.length > 0) {
+              const currentPkgs = localStorage.getItem(STORAGE_KEYS.PACKAGES);
+              if (!currentPkgs) setJson(STORAGE_KEYS.PACKAGES, cfg.packages);
+            }
+            if (Array.isArray(cfg.classPhotos) && cfg.classPhotos.length > 0) {
+              const currentPhotos = localStorage.getItem(STORAGE_KEYS.CLASS_PHOTOS);
+              if (!currentPhotos) setJson(STORAGE_KEYS.CLASS_PHOTOS, cfg.classPhotos);
+            }
+            window.dispatchEvent(new CustomEvent('stsp_storage_updated', { detail: { key: 'initial_config_loaded' } }));
+          }
+        }
+      } catch (err) {
+        console.warn('Initial static config preload skipped:', err);
+      }
+    }
+
+    // 2. If Supabase Cloud is configured, pull live data so Phone, Tablet and PC are 100% in sync
+    if (isSupabaseConfigured()) {
+      try {
+        const cloudData = await SupabaseCloud.fetchAll();
+        if (cloudData) {
+          let updated = false;
+          if (cloudData.settings) {
+            setJson(STORAGE_KEYS.SETTINGS, cloudData.settings);
+            updated = true;
+          }
+          if (cloudData.classes && cloudData.classes.length > 0) {
+            setJson(STORAGE_KEYS.CLASSES, cloudData.classes);
+            updated = true;
+          }
+          if (cloudData.packages && cloudData.packages.length > 0) {
+            setJson(STORAGE_KEYS.PACKAGES, cloudData.packages);
+            updated = true;
+          }
+          if (cloudData.students && cloudData.students.length > 0) {
+            setJson(STORAGE_KEYS.STUDENTS, cloudData.students);
+            updated = true;
+          }
+          if (cloudData.orders && cloudData.orders.length > 0) {
+            setJson(STORAGE_KEYS.ORDERS, cloudData.orders);
+            updated = true;
+          }
+          if (cloudData.classPhotos && cloudData.classPhotos.length > 0) {
+            setJson(STORAGE_KEYS.CLASS_PHOTOS, cloudData.classPhotos);
+            updated = true;
+          }
+          if (updated) {
+            window.dispatchEvent(new CustomEvent('stsp_storage_updated', { detail: { key: 'cloud_sync_completed' } }));
+          }
+        }
+      } catch (e) {
+        console.warn('Supabase cloud fetch error:', e);
+      }
+    }
+  },
+
+  async syncAllToSupabase(): Promise<{ success: boolean; message: string }> {
+    return SupabaseCloud.syncAllToCloud({
+      settings: this.getSettings(),
+      classes: this.getClasses(),
+      packages: this.getPackages(),
+      students: this.getStudents(),
+      orders: this.getOrders(),
+    });
+  },
+
+  // --- ONE-CLICK FAST DEVICE TRANSFER (PC -> PHONE / TABLET) ---
+  generateDeviceSyncCode(): string {
+    const backup = {
+      settings: this.getSettings(),
+      classes: this.getClasses(),
+      packages: this.getPackages(),
+      students: this.getStudents(),
+      orders: this.getOrders(),
+      classPhotos: this.getClassPhotos(),
+      timestamp: Date.now(),
+    };
+    try {
+      const jsonStr = JSON.stringify(backup);
+      return btoa(encodeURIComponent(jsonStr));
+    } catch {
+      return '';
+    }
+  },
+
+  importDeviceSyncCode(code: string): { success: boolean; message: string } {
+    try {
+      const clean = code.trim();
+      if (!clean) return { success: false, message: 'Kod segerak kosong.' };
+      const jsonStr = decodeURIComponent(atob(clean));
+      const data = JSON.parse(jsonStr);
+      if (!data || typeof data !== 'object') {
+        return { success: false, message: 'Format kod segerak tidak sah.' };
+      }
+      if (data.settings && typeof data.settings === 'object') setJson(STORAGE_KEYS.SETTINGS, data.settings);
+      if (Array.isArray(data.classes)) setJson(STORAGE_KEYS.CLASSES, data.classes);
+      if (Array.isArray(data.packages)) setJson(STORAGE_KEYS.PACKAGES, data.packages);
+      if (Array.isArray(data.students)) setJson(STORAGE_KEYS.STUDENTS, data.students);
+      if (Array.isArray(data.orders)) setJson(STORAGE_KEYS.ORDERS, data.orders);
+      if (Array.isArray(data.classPhotos)) setJson(STORAGE_KEYS.CLASS_PHOTOS, data.classPhotos);
+
+      window.dispatchEvent(new CustomEvent('stsp_storage_updated', { detail: { key: 'device_sync_imported' } }));
+      this.addAuditLog('admin@sktsp.edu.my', 'Pindahan Data Peranti', 'Data berjaya dipindahkan daripada peranti lain.');
+      return { success: true, message: 'Data berjaya disegerakkan daripada peranti lain!' };
+    } catch (e: any) {
+      return { success: false, message: `Ralat memproses kod pindahan: ${e.message}` };
+    }
+  },
 };
+

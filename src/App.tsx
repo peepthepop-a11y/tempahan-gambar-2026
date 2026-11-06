@@ -88,6 +88,11 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Cross-device sync & static config preload on startup
+    StorageService.initSync().then(() => {
+      refreshAllData();
+    });
+
     const handleStorageUpdate = () => {
       refreshAllData();
     };

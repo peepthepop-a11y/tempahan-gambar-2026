@@ -1,0 +1,95 @@
+{
+  "version": "1.0",
+  "schoolName": "SEKOLAH KEBANGSAAN TAMAN SRI PULAI",
+  "sessionYear": "2026",
+  "settings": {
+    "schoolName": "SEKOLAH KEBANGSAAN TAMAN SRI PULAI",
+    "schoolEmblemText": "BERILMU BERAMAL BERBAKTI",
+    "schoolTagline": "Mencapai Kecemerlangan Akademik & Sahsiah Terpuji",
+    "sessionYear": "2026",
+    "homepageTitle": "Tempahan Gambar Kelas Sesi 2026",
+    "announcementNotice": "Sesi fotografi gambar kelas murid bagi tahun 2026 sedang berlangsung. Ibu bapa dan penjaga dinasihatkan membuat tempahan gambar kelas anak masing-masing sebelum tarikh tutup rasmi.",
+    "isBookingOpen": true,
+    "bookingStartDate": "2026-03-01",
+    "bookingEndDate": "2026-11-30",
+    "bankName": "MAYBANK (MALAYAN BANKING BERHAD)",
+    "bankAccountHolder": "PIBG SK TAMAN SRI PULAI",
+    "bankAccountNumber": "5512 8901 4432",
+    "paymentInstructions": "Sila buat bayaran secara pemindahan bank (Online Transfer / DuitNow QR) ke akaun PIBG SK Taman Sri Pulai di atas. Nyatakan Nama Murid & Kelas pada ruangan rujukan bayaran. Kemudian muat naik resit/bukti bayaran pada borang tempahan.",
+    "whatsappNumber": "60197824150",
+    "contactEmail": "sktamansripulai@moe.edu.my",
+    "schoolAddress": "Jalan Batai 4, Taman Sri Pulai, 81110 Kangkar Pulai, Johor Bahru, Johor",
+    "schoolPhone": "07-527 2188"
+  },
+  "classes": [
+    { "id": "cls-pra-1", "year": "Prasekolah", "name": "Prasekolah Mawaddah", "teacherName": "Cikgu Nurul Huda binti Ismail", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-pra-2", "year": "Prasekolah", "name": "Prasekolah Sakinah", "teacherName": "Cikgu Siti Zaleha binti Mansur", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-ppki-1", "year": "Pendidikan Khas", "name": "PPKI Al-Fateh", "teacherName": "Cikgu Mohd Hafiz bin Zakaria", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-ppki-2", "year": "Pendidikan Khas", "name": "PPKI An-Nur", "teacherName": "Cikgu Faizah binti Abdul Rahman", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-1b", "year": "Tahun 1", "name": "1 Bestari", "teacherName": "Cikgu Noraini binti Yusof", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-1c", "year": "Tahun 1", "name": "1 Cemerlang", "teacherName": "Cikgu Ahmad Ridzwan", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-1a", "year": "Tahun 1", "name": "1 Amanah", "teacherName": "Ustazah Siti Hajar", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-2b", "year": "Tahun 2", "name": "2 Bestari", "teacherName": "Cikgu Fauziah binti Hamid", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-2c", "year": "Tahun 2", "name": "2 Cemerlang", "teacherName": "Cikgu Roslan bin Daud", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-3b", "year": "Tahun 3", "name": "3 Bestari", "teacherName": "Cikgu Maryam binti Omar", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-3c", "year": "Tahun 3", "name": "3 Cemerlang", "teacherName": "Cikgu Zulkifli bin Kassim", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-4b", "year": "Tahun 4", "name": "4 Bestari", "teacherName": "Cikgu Hasnah binti Idris", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-5b", "year": "Tahun 5", "name": "5 Bestari", "teacherName": "Cikgu Khairul Nizam", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-6b", "year": "Tahun 6", "name": "6 Bestari", "teacherName": "Cikgu Azman bin Sulaiman", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" },
+    { "id": "cls-6c", "year": "Tahun 6", "name": "6 Cemerlang", "teacherName": "Cikgu Suraya binti Mansor", "isActive": true, "createdAt": "2026-01-10T08:00:00Z" }
+  ],
+  "packages": [
+    {
+      "id": "pkg-a",
+      "code": "PAKEJ A",
+      "name": "Gambar Formal Kelas Saiz 5R",
+      "price": 7,
+      "description": "1 keping cetakan foto rasmi gaya formal bersama guru kelas dan murid-murid bersaiz 5R (5x7 inci). Lengkap dengan reka bentuk template rasmi SKTSP.",
+      "contents": [
+        "1x Cetakan Gambar Formal Kelas Saiz 5R (5x7 inci)",
+        "Reka Bentuk Template Rasmi Sekolah SKTSP",
+        "Kemasan Kertas Foto Studio Berkualiti Makmal",
+        "Hanya Cetakan Gambar Sahaja"
+      ],
+      "isActive": true,
+      "isPopular": false,
+      "createdAt": "2026-01-05T08:00:00Z"
+    },
+    {
+      "id": "pkg-b",
+      "code": "PAKEJ B",
+      "name": "Gambar Freestyle Kelas Saiz 5R",
+      "price": 7,
+      "description": "1 keping cetakan foto gaya santai / freestyle bersama rakan sekelas dan guru kelas bersaiz 5R (5x7 inci). Lengkap dengan reka bentuk template ceria SKTSP.",
+      "contents": [
+        "1x Cetakan Gambar Freestyle Kelas Saiz 5R (5x7 inci)",
+        "Reka Bentuk Template Eksklusif & Ceria SKTSP",
+        "Kemasan Kertas Foto Studio Berkualiti Makmal",
+        "Hanya Cetakan Gambar Sahaja"
+      ],
+      "isActive": true,
+      "isPopular": false,
+      "createdAt": "2026-01-05T08:00:00Z"
+    },
+    {
+      "id": "pkg-c",
+      "code": "PAKEJ C",
+      "name": "Gambar Formal + Freestyle (Kombo 5R)",
+      "price": 12,
+      "originalPrice": 14,
+      "description": "Set kombo lengkap 2 keping: 1x Gambar Formal Kelas Saiz 5R dan 1x Gambar Freestyle Kelas Saiz 5R. Kedua-dua gambar dilengkapi template rasmi sekolah SKTSP dengan penjimatan harga istimewa.",
+      "contents": [
+        "1x Cetakan Gambar Formal Kelas Saiz 5R (Template Rasmi)",
+        "1x Cetakan Gambar Freestyle Kelas Saiz 5R (Template Ceria)",
+        "Diskaun Jimat RM2.00 (Harga Asal RM14.00 ➔ Tawaran RM12.00)",
+        "Hanya Cetakan Gambar Sahaja (2 Keping Foto 5R)"
+      ],
+      "isActive": true,
+      "isPopular": true,
+      "createdAt": "2026-01-05T08:00:00Z"
+    }
+  ],
+  "classPhotos": [],
+  "students": [],
+  "orders": []
+}

@@ -21,6 +21,11 @@ import {
   FileArchive,
   Key,
   ShieldCheck,
+  Smartphone,
+  RefreshCw,
+  Copy,
+  Check,
+  Cloud,
 } from 'lucide-react';
 
 interface SettingsManagerProps {
@@ -157,6 +162,68 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({ settings }) =>
     };
     reader.readAsText(file);
     e.target.value = '';
+  };
+
+  // Cross-device fast sync state & handlers
+  const [deviceSyncCode, setDeviceSyncCode] = useState<string>('');
+  const [inputSyncCode, setInputSyncCode] = useState<string>('');
+  const [copiedSyncCode, setCopiedSyncCode] = useState(false);
+  const [cloudSyncRunning, setCloudSyncRunning] = useState(false);
+
+  const handleGenerateSyncCode = () => {
+    const code = StorageService.generateDeviceSyncCode();
+    setDeviceSyncCode(code);
+    setActionNotice('Kod pindahan peranti berjaya dijana! Salin kod ini dan tampal di telefon/tab anda.');
+    setTimeout(() => setActionNotice(null), 4000);
+  };
+
+  const handleCopySyncCode = () => {
+    if (!deviceSyncCode) return;
+    navigator.clipboard.writeText(deviceSyncCode);
+    setCopiedSyncCode(true);
+    setTimeout(() => setCopiedSyncCode(false), 3000);
+    setActionNotice('Kod pindahan telah disalin ke papan klip!');
+    setTimeout(() => setActionNotice(null), 3000);
+  };
+
+  const handleImportDeviceSyncCode = () => {
+    if (!inputSyncCode.trim()) return;
+    const res = StorageService.importDeviceSyncCode(inputSyncCode);
+    if (res.success) {
+      setForm(StorageService.getSettings());
+      setInputSyncCode('');
+      setActionNotice(res.message);
+    } else {
+      alert(res.message);
+    }
+    setTimeout(() => setActionNotice(null), 4000);
+  };
+
+  const handlePushToSupabase = async () => {
+    setCloudSyncRunning(true);
+    try {
+      const res = await StorageService.syncAllToSupabase();
+      setActionNotice(res.message);
+    } catch (e: any) {
+      setActionNotice(`Ralat segerak: ${e.message}`);
+    } finally {
+      setCloudSyncRunning(false);
+      setTimeout(() => setActionNotice(null), 5000);
+    }
+  };
+
+  const handlePullFromSupabase = async () => {
+    setCloudSyncRunning(true);
+    try {
+      await StorageService.initSync();
+      setForm(StorageService.getSettings());
+      setActionNotice('Berjaya menarik data terkini daripada Supabase Cloud!');
+    } catch (e: any) {
+      setActionNotice(`Ralat: ${e.message}`);
+    } finally {
+      setCloudSyncRunning(false);
+      setTimeout(() => setActionNotice(null), 4000);
+    }
   };
 
   return (
@@ -518,13 +585,33 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({ settings }) =>
               />
             </div>
 
-            <div className="pt-2 flex items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={handleTestSupabaseConnection}
                 className="px-3.5 py-2 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs cursor-pointer"
               >
                 Uji Sambungan Supabase
+              </button>
+
+              <button
+                type="button"
+                disabled={cloudSyncRunning}
+                onClick={handlePushToSupabase}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer shadow-xs"
+              >
+                <Cloud className="w-3.5 h-3.5" />
+                <span>{cloudSyncRunning ? 'Menyegerak...' : 'Segerak Semua Data ke Supabase (Push)'}</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={cloudSyncRunning}
+                onClick={handlePullFromSupabase}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded bg-[#163B65] hover:bg-[#102C4E] text-white font-bold text-xs cursor-pointer shadow-xs"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${cloudSyncRunning ? 'animate-spin' : ''}`} />
+                <span>Tarik Data Terkini dari Awan (Pull)</span>
               </button>
 
               {testResult && (
@@ -536,6 +623,101 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({ settings }) =>
                   {testResult.message}
                 </span>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Section 5B: Instant Cross-Device Transfer (PC ➔ Phone / Tablet) */}
+        <div className="bg-white p-6 rounded-xl border-2 border-indigo-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-indigo-100">
+            <div className="flex items-center gap-2 text-indigo-950">
+              <Smartphone className="w-5 h-5 text-indigo-600" />
+              <h3 className="font-extrabold text-sm">Penyegerakan Pantas Antara Peranti (PC ➜ Telefon / Tablet)</h3>
+            </div>
+            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">
+              Penyelesaian Segera Tanpa Database
+            </span>
+          </div>
+
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-900 leading-relaxed">
+            <strong>Mengapa data di telefon/tablet berbeza daripada komputer anda?</strong>
+            <br />
+            Pelayar komputer dan pelayar telefon menyimpan memori setempat (<em>localStorage</em>) secara berasingan. Sekiranya anda belum menyambungkan pangkalan data awan Supabase, gunakan ciri pindahan pantas di bawah untuk memindahkan semua tetapan, kelas, pakej, dan gambar yang telah anda edit di komputer terus ke telefon atau tablet anda dalam 2 saat!
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-1">
+            {/* Step 1: On PC generate code */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-800">
+                  <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">1</span>
+                  <h4>Jana Kod Pindahan (Di Komputer / PC)</h4>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Klik butang di bawah untuk menukar semua data semasa yang telah anda edit di komputer ini kepada kod pindahan selamat:
+                </p>
+
+                {deviceSyncCode ? (
+                  <div className="space-y-2 pt-1">
+                    <textarea
+                      readOnly
+                      rows={3}
+                      value={deviceSyncCode}
+                      className="w-full p-2 bg-white border border-indigo-200 rounded text-[10px] font-mono select-all text-slate-700"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleCopySyncCode}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-xs cursor-pointer shadow-xs"
+                    >
+                      {copiedSyncCode ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copiedSyncCode ? 'Telah Disalin!' : 'Salin Kod Pindahan'}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleGenerateSyncCode}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs cursor-pointer shadow-xs transition-colors"
+                  >
+                    <Smartphone className="w-3.5 h-3.5 text-indigo-200" />
+                    <span>Jana Kod Pindahan Sekarang</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Step 2: On Phone import code */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-800">
+                  <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">2</span>
+                  <h4>Tampal & Segerak (Di Telefon / Tablet)</h4>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Buka pautan web di telefon anda ➔ Masuk menu <strong>Tetapan</strong> ➔ Tampal kod pindahan di bawah dan tekan Segerak:
+                </p>
+                <textarea
+                  rows={3}
+                  placeholder="Tampal kod pindahan peranti di sini..."
+                  value={inputSyncCode}
+                  onChange={(e) => setInputSyncCode(e.target.value)}
+                  className="w-full p-2 bg-white border border-slate-300 rounded text-[10px] font-mono text-slate-700"
+                />
+                <button
+                  type="button"
+                  onClick={handleImportDeviceSyncCode}
+                  disabled={!inputSyncCode.trim()}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-bold text-xs shadow-xs transition-colors ${
+                    inputSyncCode.trim()
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer'
+                      : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  }`}
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Segerakkan ke Telefon / Tab Ini</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

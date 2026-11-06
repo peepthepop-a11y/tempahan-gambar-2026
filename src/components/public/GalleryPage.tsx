@@ -103,7 +103,7 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Year Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            {['ALL', 'Tahun 1', 'Tahun 2', 'Tahun 3', 'Tahun 4', 'Tahun 5', 'Tahun 6'].map(
+            {['ALL', 'Prasekolah', 'Pendidikan Khas', 'Tahun 1', 'Tahun 2', 'Tahun 3', 'Tahun 4', 'Tahun 5', 'Tahun 6'].map(
               (year) => (
                 <button
                   key={year}
@@ -170,21 +170,25 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
         <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
           <Camera className="w-12 h-12 text-slate-300 mx-auto" />
           <h3 className="font-extrabold text-slate-700 text-base">
-            Tiada foto kelas ditemui
+            {photos.length === 0 ? 'Gambar Kelas Sedang Disediakan' : 'Tiada foto kelas ditemui'}
           </h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Tiada gambar kelas yang sepadan dengan penapis tahun atau carian &quot;{searchTerm}&quot;. Sila pilih tahun lain atau kosongkan carian.
+          <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+            {photos.length === 0
+              ? 'Sesi fotografi kelas sedang dijalankan. Gambar rasmi kelas bertemplate (Formal & Freestyle) akan dimuat naik ke sini secara berperingkat oleh pihak pentadbir sekolah.'
+              : `Tiada gambar kelas yang sepadan dengan penapis atau carian "${searchTerm}". Sila pilih kategori lain atau kosongkan carian.`}
           </p>
-          <button
-            onClick={() => {
-              setSelectedYear('ALL');
-              setSelectedType('ALL');
-              setSearchTerm('');
-            }}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors cursor-pointer"
-          >
-            Tunjukkan Semua Gambar
-          </button>
+          {photos.length > 0 && (
+            <button
+              onClick={() => {
+                setSelectedYear('ALL');
+                setSelectedType('ALL');
+                setSearchTerm('');
+              }}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors cursor-pointer"
+            >
+              Tunjukkan Semua Gambar
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
